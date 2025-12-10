@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinEdge Finance | Loan Portfolio Analytics</title>
+    
+    <!-- 🟢 FONTS: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- 🟢 ICONS: Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- 🟢 ANIMATIONS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           1. DESIGN SYSTEM
+           ========================================= */
+        :root {
+            --bg-body: #0B1623;      /* Deep Navy */
+            --bg-sidebar: #060e16;   /* Darker Navy */
+            --bg-card: #152232;      /* Card Background */
+            
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --accent: #4dabf7;       /* Electric Blue */
+            --accent-glow: rgba(77, 171, 247, 0.2);
+            
+            --sidebar-width: 280px;
+            --container-max: 1100px;
+            --border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* =========================================
+           2. BASE STYLES
+           ========================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.2s; }
+        ul { list-style: none; }
+        img { display: block; max-width: 100%; border-radius: 8px; }
+
+        /* Typography */
+        h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; color: #fff; }
+        h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 2.5rem; color: #fff; border-left: 4px solid var(--accent); padding-left: 15px; }
+        h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: #fff; }
+        p { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 1.05rem; }
+        
+        .tag {
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;
+            font-weight: 700; color: var(--accent); margin-bottom: 2rem; display: block;
+        }
+
+        /* =========================================
+           3. SIDEBAR NAVIGATION
+           ========================================= */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--bg-sidebar);
+            border-right: var(--border);
+            position: fixed;
+            top: 0; left: 0;
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 50;
+        }
+
+        .brand { font-size: 1.4rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
+        .nav-menu { margin-top: 3rem; }
+        
+        .nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 14px 0;
+            color: var(--text-muted); font-size: 0.95rem; cursor: pointer;
+        }
+        .nav-item:hover, .nav-item.active { color: var(--accent); }
+        .sidebar-footer { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* =========================================
+           4. MAIN CONTENT
+           ========================================= */
+        .main {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 5rem 5rem;
+        }
+
+        .container { max-width: var(--container-max); margin: 0 auto; }
+section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
+        
+        /* Divider */
+        .divider { height: 1px; width: 100%; background: var(--border); margin: 4rem 0; }
+
+        /* =========================================
+           5. HERO SECTION
+           ========================================= */
+        .hero { padding: 2rem 0 0 0; }
+        
+        .hero-desc {
+            max-width: 750px; 
+            font-size: 1.2rem; 
+            color: var(--text-muted); 
+            margin-bottom: 2rem;
+        }
+
+       .btn-primary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background-color: var(--accent); 
+            color: #ffffff; /* Changed from Black to White */
+            padding: 14px 32px; border-radius: 6px;
+            font-weight: 700; font-size: 1rem;
+            transition: all 0.3s ease;
+            
+            /* ADDED: Constant Glow */
+            box-shadow: 0 0 15px rgba(77, 171, 247, 0.5);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* Improves white text readability */
+        }
+        
+        .btn-primary:hover { 
+            transform: translateY(-3px); 
+            background-color: #3fa0eb; /* Slightly darker shade on hover */
+            
+            /* ADDED: Stronger Glow on Hover */
+            box-shadow: 0 0 35px rgba(77, 171, 247, 0.8); 
+        }
+        /* Summary Info Grid (Image 1 Reference) */
+        .summary-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+            margin-top: 5rem; padding-top: 2rem;
+            border-top: var(--border);
+        }
+        .info-box h4 { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+        .info-box span { font-size: 1.2rem; color: #fff; font-weight: 700; }
+
+        /* =========================================
+           6. PROJECT OVERVIEW
+           ========================================= */
+        .card-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 2rem;
+        }
+        .simple-card {
+            background: var(--bg-card); padding: 2rem; border-radius: 8px; border: var(--border);
+        }
+        .simple-card i { font-size: 1.5rem; color: var(--accent); margin-bottom: 1rem; }
+
+        /* =========================================
+           7. DATASET & TECH (Image 2 Reference)
+           ========================================= */
+        .dataset-layout {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
+        }
+        .data-card {
+            background: var(--bg-card); padding: 2.5rem; border-radius: 12px; border: var(--border);
+        }
+        .data-card h3 { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+        
+        .tech-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1rem; }
+        .tag-pill {
+            padding: 8px 16px; background: rgba(255,255,255,0.05); border: var(--border);
+            border-radius: 50px; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+        }
+        .key-fields { font-family: monospace; color: var(--accent); font-size: 0.9rem; line-height: 1.8; }
+
+/* --- NEW STYLES FOR DATASET CARD --- */
+
+/* 1. The Insight/Quote Box */
+.insight-note {
+    background: rgba(77, 171, 247, 0.1); /* Light Blue BG */
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.9rem;
+    color: #e0e7ff;
+    font-style: italic;
+    margin: 1.5rem 0;
+}
+
+/* 2. Key Fields as Tags (Pills) */
+.field-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0.5rem;
+}
+
+.field-pill {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+.field-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* 3. The Bottom Stat Row */
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item h4 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.stat-item span {
+    font-size: 0.95 rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+
+
+       /* =========================================
+           8. PROBLEM STATEMENT
+           ========================================= */
+        .problem-box {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(59, 130, 246, 0.1) 100%);
+            padding: 3rem; border-radius: 12px; border-left: 4px solid var(--accent);
+        }
+
+        /* =========================================
+           9. SOLUTION (Gallery)
+           ========================================= */
+        .gallery-main {
+            width: 100%; border: var(--border); border-radius: 12px; overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); margin-bottom: 3rem;
+        }
+        .gallery-grid-small {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
+        }
+        .gallery-small { border: var(--border); border-radius: 12px; overflow: hidden; }
+        .caption { margin-top: 10px; color: var(--text-muted); font-size: 0.9rem; text-align: center; }
+
+        /* =========================================
+           10. INSIGHTS (Numbered List)
+           ========================================= */
+        .insight-card {
+            background: var(--bg-card); padding: 2rem; border-radius: 8px; border: var(--border);
+            margin-bottom: 1.5rem; display: flex; gap: 20px; align-items: flex-start;
+        }
+        .insight-num {
+            background: rgba(77, 171, 247, 0.1); color: var(--accent); 
+            padding: 5px 12px; border-radius: 6px; font-weight: 700; height: fit-content;
+        }
+        .insight-content ul { list-style: disc; margin-left: 1.5rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+        /* =========================================
+           11. LEARNING & CONCLUSION
+           ========================================= */
+        .learning-box {
+            background: var(--bg-card); padding: 2rem; border-radius: 8px; margin-bottom: 1rem;
+        }
+        
+        .contact-section {
+            text-align: center; padding: 4rem 0; background: var(--bg-card); border-radius: 12px;
+        }
+        .contact-links { display: flex; justify-content: center; gap: 30px; margin-top: 1.5rem; }
+        .contact-item { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; color: #fff; }
+        .contact-item:hover { color: var(--accent); }
+
+        /* Mobile */
+        .mobile-menu-btn { display: none; }
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; width: 100%; padding: 3rem 2rem; }
+            .mobile-menu-btn { display: block; position: fixed; top: 20px; right: 20px; background: var(--accent); color: #0B1623; padding: 10px; border-radius: 6px; z-index: 100; font-size: 1.5rem; }
+            .summary-grid, .dataset-layout, .gallery-grid-small, .card-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu-btn"><i class="ph ph-list"></i></div>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+        <div>
+<div class="brand">
+    <i class="ph-fill ph-list-dashes" style="color: var(--accent);"></i> Contents
+</div>
+           <ul class="nav-menu">
+                <li><a href="#hero" class="nav-item active">Home</a></li>
+                <li><a href="#overview" class="nav-item">Project Overview</a></li>
+                <li><a href="#dataset" class="nav-item">Data & Tools</a></li>
+                <li><a href="#problem" class="nav-item">Business Problem</a></li>
+                <li><a href="#solution" class="nav-item">The Solution</a></li>
+                <li><a href="#insights" class="nav-item">Key Insights</a></li>
+                <li><a href="#learning" class="nav-item">Learnings</a></li>
+
+                <!-- DIVIDER & CONNECT LINK -->
+                <li style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <a href="#contact" class="nav-item" style="color: #fff; font-weight: 600; display: flex; justify-content: space-between;">
+                        Let's Connect <i class="ph-bold ph-arrow-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- (Empty footer now) -->
+        <div class="sidebar-footer"></div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+        
+        <!-- A) HERO SECTION -->
+        <section id="hero">
+    <div class="container" data-aos="fade-up">
+            
+                <span class="tag">Power BI Dashboard Project</span>
+                <h1>FinEdge Finance:<br>Loan Portfolio Analytics</h1>
+                
+                <p class="hero-desc">
+                    A strategic dashboard designed to bridge the gap between Sales Velocity and Credit Risk monitoring for a North Indian NBFC.
+                </p>
+                <p class="hero-desc" style="font-size: 1rem;">
+                    FinEdge Finance operates across North India with a diverse retail loan portfolio. The goal of this project was to design a clean, insight-rich analytical view that allows leadership to quickly understand loan health, customer risk profiles, and business growth patterns.
+                </p>
+                
+                <!-- 🔴 EDIT LINK -->
+                <a href="https://app.powerbi.com/view?r=eyJrIjoiNTAyY2NlNGItNmE1Ny00MDJlLWI0ZTQtNDAwMDcyNWUxMzE1IiwidCI6ImQ4MTIxYzJhLTEzMzktNDk2NC1hN2NmLWMyZjU5OTAxYzBlNiJ9&pageName=a3099aa0a302095600bc" target="_blank" class="btn-primary">
+                    View Live Dashboard <i class="ph-bold ph-arrow-right"></i>
+                </a>
+
+                <!-- Summary Grid (Image 1 Style) -->
+                <div class="summary-grid">
+                    <div class="info-box">
+                        <h4>Domain</h4>
+                        <span>Banking (BFSI)</span>
+                    </div>
+                    <div class="info-box">
+                        <h4>Role</h4>
+                        <span>Data Analyst</span>
+                    </div>
+                    <div class="info-box">
+                        <h4>Tools</h4>
+                        <span>Power BI, DAX</span>
+                    </div>
+                    <div class="info-box">
+                        <h4>Timeline</h4>
+                        <span>2 Weeks</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- B) PROJECT OVERVIEW -->
+<section id="overview">
+    <div class="container" data-aos="fade-up">
+                <h2>Project Overview</h2>
+                <p>The financial sector relies heavily on timely insights to monitor portfolio performance, detect risk early, and plan future strategies. This dashboard was developed to analyze:</p>
+                
+                <!-- Analysis Points Grid -->
+                <div class="card-grid">
+                    <div class="simple-card">
+                        <i class="ph ph-chart-line-up"></i>
+                        <h3>Growth & Volume</h3>
+                        <p>Overall AUM movement, Loan disbursement trends, and Active loan account growth.</p>
+                    </div>
+                    <div class="simple-card">
+                        <i class="ph ph-warning-octagon"></i>
+                        <h3>Risk & NPA</h3>
+                        <p>Loan disbursement vs. default trends, NPA ratio fluctuations, and Risk segmentation.</p>
+                    </div>
+                    <div class="simple-card">
+                        <i class="ph ph-map-pin"></i>
+                        <h3>Composition</h3>
+                        <p>Geographic contribution, Product-level portfolio mix, and Maturity distribution.</p>
+                    </div>
+                </div>
+                <br>
+                <p>The design focuses on clarity, minimalism, and an intuitive reading experience — ideal for high-level decision-making.</p>
+            </div>
+        </section>
+
+<!-- C) DATASET & TECH STACK -->
+<section id="dataset">
+    <div class="container" data-aos="fade-up">
+        <h2>Dataset & Tech Stack</h2>
+        
+        <div class="dataset-layout">
+            
+<!-- 1. DATASET CARD -->
+            <div class="data-card">
+                <h3><i class="ph ph-database"></i> Dataset Summary</h3>
+                
+                <p style="font-size: 0.95rem;">
+                    The dataset was created from scratch using AI (Python) to simulate a realistic Financial Institution's portfolio.
+                </p>
+
+                <!-- Insight Box -->
+                <div class="insight-note">
+                    Dummy values were used but structured to reflect realistic behaviour of sales, defaults, recovery, and NPA trends.
+                </div>
+                
+                <!-- Key Fields -->
+                <div style="margin-bottom: 2rem;">
+                    <p style="font-size: 0.85rem; color: #fff; font-weight: 600; margin-bottom: 8px;">Key Fields:</p>
+                    <div class="field-tags">
+                        <span class="field-pill">Disbursement Amount</span>
+                        <span class="field-pill">Interest Rate</span>
+ <span class="field-pill">Loan Status </span>
+                        <span class="field-pill">Loan Product & Purpose</span>
+                       
+                        <span class="field-pill">Maturity Date </span>
+                        <span class="field-pill">Outstanding Balance</span>
+                        <span class="field-pill">Customer Demographics</span>
+                    </div>
+                </div>
+
+                <!-- Bottom Stats Row -->
+                <div class="stat-row">
+                    <div class="stat-item">
+                        <h4>Total Records</h4>
+                        <span>5,200+</span>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Timeline</h4>
+                        <span>2022 - 2025</span>
+                    </div>
+                    <!-- CHANGED 'FORMAT' TO 'GRANULARITY' -->
+                    <div class="stat-item">
+                        <h4>Granularity</h4>
+                        <span>Loan Level</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. TOOLS CARD (Fixed Alignment) -->
+            <!-- Removed 'justify-content: center' so it aligns to top -->
+            <div class="data-card" style="display: flex; flex-direction: column;"> 
+                <h3><i class="ph ph-toolbox"></i> Tech Stack</h3>
+                <p>An End-to-End implementation pipeline.</p>
+                
+                <div class="tech-tags" style="margin-top: 1.5rem; gap: 12px;">
+                    <span class="tag-pill"><i class="ph-bold ph-chart-bar"></i> Power BI</span>
+                    <span class="tag-pill"><i class="ph-bold ph-function"></i> DAX (Advanced)</span>
+                    <span class="tag-pill"><i class="ph-bold ph-table"></i> Power Query</span>
+                    <span class="tag-pill"><i class="ph-bold ph-file-code"></i> Python (Pandas)</span>
+                    <span class="tag-pill"><i class="ph-bold ph-paint-brush"></i> Figma (UI)</span>
+                    <span class="tag-pill"><i class="ph-bold ph-share-network"></i> Data Modeling</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+        <!-- D) PROBLEM STATEMENT -->
+<section id="problem">
+    <div class="container" data-aos="fade-up">
+                <h2>Business Problem</h2>
+                <div class="problem-box">
+                    <p style="font-size: 1.2rem; color: #fff; margin-bottom: 1.5rem;">
+                        <strong>The Executive Visibility Gap</strong>
+                    </p>
+                    <p>
+                        The Regional Directors at FinEdge Finance lacked a consolidated view of their North India operations. They were relying on disjointed reports that separated "Sales Performance" from "Credit Risk," leading to blind spots in decision-making. 
+                    </p>
+                    <p>
+                        They required a single-pane-of-glass dashboard to answer: <br>
+                        <em>"Are we growing profitably, or are we accumulating toxic assets in high-volume regions?"</em>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- E) THE SOLUTION -->
+<section id="solution">
+    <div class="container" data-aos="fade-up">
+             
+                <h2>One-Page Executive Monitor</h2>
+                <p>To solve this, I designed a unified one-page view that integrates Sales, Operations, and Finance metrics into a seamless user experience.</p>
+                
+                <!-- Main Image -->
+                <div class="gallery-main">
+                    <!-- 🔴 REPLACE IMAGE -->
+                    <img src="main-dashboard.png" alt="Main Dashboard View">
+                </div>
+                <div class="caption">Main View: Balancing Sales Velocity (Left) vs. Risk Exposure (Right)</div>
+
+                <div class="divider"></div>
+
+                <!-- Sub Images -->
+                <div class="gallery-grid-small">
+                    <div class="gallery-small">
+                        <!-- 🔴 REPLACE IMAGE -->
+                        <img src="tooltip-view.png" alt="Tooltip Drilldown">
+                        <div class="caption">Granular Report Page Tooltips</div>
+                    </div>
+                    <div class="gallery-small">
+                        <!-- 🔴 REPLACE IMAGE -->
+                        <img src="filter-pane.png" alt="Filter Pane">
+                        <div class="caption">Custom Collapsible Navigation Pane</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- F) INSIGHTS -->
+<section id="insights">
+    <div class="container" data-aos="fade-up">
+                <h2>Insights & Interpretation</h2>
+                
+                <!-- Insight 1 -->
+                <div class="insight-card">
+                    <div class="insight-num">1️⃣</div>
+                    <div class="insight-content">
+                        <h3>Disbursement vs Default Trends</h3>
+                        <ul>
+                            <li>Disbursement peaked in 2023 and gradually stabilised.</li>
+                            <li>Default amounts increased slightly toward 2024, signalling early stress.</li>
+                            <li>The decline in defaults in 2025 reflects successful recovery or better credit screening.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Insight 2 -->
+                <div class="insight-card">
+                    <div class="insight-num">2️⃣</div>
+                    <div class="insight-content">
+                        <h3>AUM Maturity Profile</h3>
+                        <ul>
+                            <li>Majority of AUM lies in <strong>15+ years</strong> category (₹4.38bn).</li>
+                            <li>Long-tenure loans indicate stable future interest income.</li>
+                            <li>Short-term maturity (≤2 years) is minimal, giving low liquidity pressure.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Insight 3 -->
+                <div class="insight-card">
+                    <div class="insight-num">3️⃣</div>
+                    <div class="insight-content">
+                        <h3>Product Portfolio Mix</h3>
+                        <ul>
+                            <li>Home Loans dominate with <strong>59.09%</strong> share — typical for retail lending.</li>
+                            <li>Strong revenue potential from secured loans.</li>
+                            <li>Personal and Auto loans have balanced contributions.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Insight 4 -->
+                <div class="insight-card">
+                    <div class="insight-num">4️⃣</div>
+                    <div class="insight-content">
+                        <h3>Geographic Distribution</h3>
+                        <ul>
+                            <li>The loan portfolio is concentrated in <strong>North India</strong>, particularly Delhi, Haryana, and Punjab region.</li>
+                            <li>Enables region-specific risk and marketing planning.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Insight 5 -->
+                <div class="insight-card">
+                    <div class="insight-num">5️⃣</div>
+                    <div class="insight-content">
+                        <h3>AUM by Risk Profile</h3>
+                        <ul>
+                            <li>Majority of customers fall under Medium and Low risk categories.</li>
+                            <li>Very High Risk segment is minimal — good for portfolio stability.</li>
+                            <li>High Risk AUM needs monitoring to avoid future NPA spikes.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- G) WHAT I LEARNED -->
+<section id="learning">
+    <div class="container" data-aos="fade-up">
+                <h2>What I Learned</h2>
+                <div class="learning-box">
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 1.5rem;">
+                            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Fair Time Intelligence</h4>
+                            <p>I learned how to implement dynamic YTD logic in DAX to solve the "Incomplete Year" comparison problem, ensuring fair benchmarking between Jan-Nov 2025 and Jan-Nov 2024.</p>
+                        </li>
+                        <li style="margin-bottom: 1.5rem;">
+                            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Risk Modeling</h4>
+                            <p>I learned to cross-reference quantitative data (Loan Amount) with qualitative data (Risk Profile based on Income & CIBIL) to tell a meaningful story beyond just "Sales numbers."</p>
+                        </li>
+                        <li>
+                            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Advanced UX</h4>
+                            <p>Moving beyond standard slicers, I built a custom app-like navigation experience using Bookmarks and Selection Panes to maximize screen real estate.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- H) CONCLUSION -->
+<section id="conclusion">
+    <div class="container" data-aos="fade-up">
+                <h2>Conclusion</h2>
+                <div class="problem-box" style="border-left: none; background: var(--bg-card);">
+                    <p>This dashboard offers a structured, executive-level view of FinEdge Finance’s loan portfolio. With insights into AUM trends, NPAs, risk segmentation, and geographic performance, it supports:</p>
+                    <!-- Boxed List -->
+                    <div class="insight-note" style="margin-top: 1.5rem;">
+                        <ul style="list-style: none;">
+                            <li style="margin-bottom: 8px;">• Credit risk management</li>
+                            <li style="margin-bottom: 8px;">• Disbursement planning</li>
+                            <li style="margin-bottom: 8px;">• Product-level strategy</li>
+                            <li>• Regional expansion decisions</li>
+                        </ul>
+                    </div>
+                    <p>This project demonstrates my ability to work with financial data, build intuitive dashboards, and create meaningful insights for business stakeholders.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- I) CONTACT -->
+      <section id="contact">              
+<div class="contact-section">
+                    <!-- 1. Reduced bottom margin here (margin-bottom: 1rem) -->
+                    <h2 style="border: none; padding: 0; margin-bottom: 1rem;">Connect with me</h2>
+                    
+                  <p style="color: var(--text-muted);">
+                        Open to data analytics opportunities.<br>
+                        Feel free to reach out for a chat about data, design, or potential collaborations.
+                    </p>
+
+                    <!-- 2. Increased top margin here (margin-top: 3.5rem) -->
+                    <div class="contact-links" style="margin-top: 3.5rem;">
+                        <!-- 🔴 EDIT HERE -->
+                        <a href="www.linkedin.com/in/vivekraturi" target="_blank" class="contact-item">
+                            <i class="ph-fill ph-linkedin-logo" style="font-size: 2rem;"></i> LinkedIn
+                        </a>
+                        <a href="mailto:vivekraturi.work@gmail.com" class="contact-item">
+                            <i class="ph-fill ph-envelope" style="font-size: 2rem;"></i> Email
+                        </a>
+                    </div>
+                </div>
+
+        <!-- Footer -->
+      <!-- Added margin-top: 8rem to push it down -->
+        <footer style="text-align: center; padding: 2rem 0; margin-top: 8rem; border-top: var(--border); color: var(--text-muted); font-size: 0.9rem;">
+            <p>© Power BI Project 💠 Vivek Raturi </p>
+        </footer>
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, offset: 50 });
+    </script>
+<!-- 🟢 NAVIGATION SCRIPT (Paste this before </body>) -->
+    <script>
+        // 1. Select all sections and nav links
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-item');
+
+        // 2. Add Scroll Event Listener
+        window.addEventListener('scroll', () => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                // Check if we have scrolled down to this section
+                // The '- 100' is a small buffer to trigger the change slightly early
+                if (pageYOffset >= (sectionTop - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            // 3. Remove 'active' from all and add to current
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
