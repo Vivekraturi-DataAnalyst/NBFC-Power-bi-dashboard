@@ -279,7 +279,12 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
         }
         
         .contact-section {
-            text-align: center; padding: 4rem 0; background: var(--bg-card); border-radius: 12px;
+            text-align: center; 
+            padding: 4rem 2rem; /* Added 2rem left/right padding */
+            background: var(--bg-card); 
+            border-radius: 12px;
+            /* Ensure it doesn't push the footer too far */
+            margin-bottom: 0; 
         }
         .contact-links { display: flex; justify-content: center; gap: 30px; margin-top: 1.5rem; }
         .contact-item { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; color: #fff; }
@@ -290,70 +295,65 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
        /* =========================================
            MOBILE & TABLET OPTIMIZATION
            ========================================= */
+      /* =========================================
+           MOBILE & TABLET OPTIMIZATION (FIXED)
+           ========================================= */
         @media (max-width: 1024px) {
             
-            /* 1. Layout & Margins */
+            /* 1. Layout Fixes */
             .main { 
                 margin-left: 0; 
                 width: 100%; 
-                /* Increased Top Padding so content isn't hidden behind header */
-                padding: 6rem 1.5rem 4rem 1.5rem; 
+                /* Removed bottom padding to fix footer space */
+                padding: 6rem 1.5rem 0 1.5rem; 
             }
             
-            /* Adjust scrolling so it lands nicely on mobile */
+            /* Remove margin from the last section so it sits on the footer */
+            #contact { margin-bottom: 2rem; }
+            
             section { scroll-margin-top: 6rem; }
 
-            /* 2. Mobile Typography (Clean & Readable) */
+            /* 2. Typography */
             h1 { font-size: 2.2rem; }
             h2 { font-size: 1.75rem; border-left-width: 3px; padding-left: 10px; margin-bottom: 2rem; }
-            .hero-desc { font-size: 1rem; }
             
-            /* 3. Dataset Stats (Fix Cluttered Items) */
-            .stat-row { 
-                display: grid; 
-                grid-template-columns: 1fr 1fr; /* 2 items per row */
-                gap: 20px; 
-            }
-            /* Make the 3rd item span full width so it doesn't look odd */
-            .stat-item:nth-child(3) { grid-column: span 2; } 
-
-            /* 4. Fix Grids to Single Column */
+            /* 3. Grid Fixes */
             .summary-grid, .dataset-layout, .gallery-grid-small, .card-grid { 
                 grid-template-columns: 1fr; 
             }
             .summary-grid { gap: 15px; margin-top: 3rem; }
+            .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+            .stat-item:nth-child(3) { grid-column: span 2; }
 
-            /* 5. Mobile Menu Button (Hamburger) */
+            /* 4. Mobile Menu Button */
             .mobile-menu-btn { 
                 display: flex; align-items: center; justify-content: center;
-                position: fixed; 
-                top: 15px; right: 15px; 
-                background: rgba(11, 22, 35, 0.8); /* Semi-transparent dark */
-                backdrop-filter: blur(8px);
+                position: fixed; top: 15px; right: 15px; 
+                background: rgba(11, 22, 35, 0.9);
                 border: 1px solid rgba(255,255,255,0.2);
-                color: #fff; 
-                padding: 0; 
-                border-radius: 8px; 
-                z-index: 1000; 
-                font-size: 1.6rem;
-                width: 48px; height: 48px;
+                color: #fff; padding: 0; border-radius: 8px; 
+                z-index: 2000; /* Highest priority */
+                font-size: 1.6rem; width: 48px; height: 48px;
                 cursor: pointer;
-                transition: 0.2s;
             }
-            .mobile-menu-btn:active { transform: scale(0.95); }
 
-            /* 6. Sidebar Logic (Slide-in Menu) */
+            /* 5. Sidebar (Drawer) */
             .sidebar { 
-                display: flex; 
+                display: flex; flex-direction: column;
                 position: fixed; top: 0; left: 0;
-                transform: translateX(-100%); /* Hidden by default */
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                width: 85%; max-width: 300px; /* Takes up 85% of mobile screen */
+                height: 100vh;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                width: 85%; max-width: 300px; 
+                background: var(--bg-sidebar);
                 box-shadow: 10px 0 50px rgba(0,0,0,0.5);
+                z-index: 1500; /* Below button, above content */
+                border-right: 1px solid rgba(255,255,255,0.1);
             }
-            
-            /* Class to add via JS to open menu */
             .sidebar.open { transform: translateX(0); }
+            
+            /* 6. Footer Fix */
+            footer { margin-top: 0 !important; padding-bottom: 2rem; }
         }
     </style>
 </head>
@@ -740,26 +740,69 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
     </script>
 <!-- 🟢 NAVIGATION SCRIPT (Paste this before </body>) -->
     <script>
-        // 1. Select all sections and nav links
+      <script>
+        // 1. FORCE SCROLL TO TOP ON RELOAD
+        if (history.scrollRestoration) {
+            history.scrollRestoration = 'manual';
+        } else {
+            window.onbeforeunload = function () {
+                window.scrollTo(0, 0);
+            }
+        }
+        window.onload = function() {
+            setTimeout(function() {
+                window.scrollTo(0, 0);
+            }, 10);
+        };
+
+        // 2. MOBILE MENU LOGIC
+        const menuBtn = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const menuIcon = menuBtn.querySelector('i');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            
+            // Toggle Icon
+            if (sidebar.classList.contains('open')) {
+                menuIcon.classList.remove('ph-list');
+                menuIcon.classList.add('ph-x');
+            } else {
+                menuIcon.classList.remove('ph-x');
+                menuIcon.classList.add('ph-list');
+            }
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                menuIcon.classList.remove('ph-x');
+                menuIcon.classList.add('ph-list');
+            });
+        });
+
+        // 3. NAVIGATION HIGHLIGHTING
         const sections = document.querySelectorAll('section');
         const navLinks = document.querySelectorAll('.nav-item');
 
-        // 2. Add Scroll Event Listener
         window.addEventListener('scroll', () => {
             let current = '';
             
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                
-                // Check if we have scrolled down to this section
-                // The '- 100' is a small buffer to trigger the change slightly early
-                if (pageYOffset >= (sectionTop - 100)) {
+                // Buffer for mobile vs desktop
+                const buffer = window.innerWidth < 1024 ? 200 : 150; 
+                if (pageYOffset >= (sectionTop - buffer)) {
                     current = section.getAttribute('id');
                 }
             });
 
-            // 3. Remove 'active' from all and add to current
+            // Bottom of page detection
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+                current = 'contact';
+            }
+
             navLinks.forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href').includes(current)) {
@@ -771,6 +814,7 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
 </body>
 
 </html>
+
 
 
 
