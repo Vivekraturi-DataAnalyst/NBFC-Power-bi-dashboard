@@ -293,111 +293,94 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
         /* Mobile */
         .mobile-menu-btn { display: none; }
 /* =========================================
-           MOBILE & TABLET OPTIMIZATION (PROFESSIONAL HEADER)
+           MOBILE & TABLET OPTIMIZATION (FINAL REFINED)
            ========================================= */
         @media (max-width: 1024px) {
             
             /* 1. HIDE Desktop Elements */
-            .sidebar { display: none; } /* We will override this for the mobile drawer */
-            #hero .tag { display: none; } /* Hide the tag in Hero (Moved to Header) */
+            .sidebar { display: none; }
+            #hero .tag { display: none; }
 
-            /* 2. THE NEW MOBILE HEADER */
+            /* 2. MOBILE HEADER */
             .mobile-header {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                position: fixed;
-                top: 0; left: 0;
-                width: 100%;
-                height: 60px; /* Fixed height */
-                background: rgba(6, 14, 22, 0.95); /* Matches Sidebar Color */
-                backdrop-filter: blur(10px);
+                display: flex; align-items: center; gap: 15px;
+                position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+                background: rgba(6, 14, 22, 0.95); backdrop-filter: blur(10px);
                 border-bottom: 1px solid rgba(255,255,255,0.1);
-                z-index: 2000; /* Stays on top */
-                padding: 0 20px;
+                z-index: 2000; padding: 0 20px;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.4);
             }
 
             .mobile-menu-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.8rem;
-                color: var(--accent);
-                cursor: pointer;
-                /* Removed border/background, making it clean icon */
-                background: none; 
-                border: none;
-                width: auto; height: auto;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 1.8rem; color: var(--accent); cursor: pointer;
+                background: none; border: none; padding: 0;
             }
 
             .mobile-app-title {
-                font-size: 0.85rem;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                color: #fff;
+                font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+                letter-spacing: 1px; color: #fff;
+                transition: opacity 0.3s ease; /* Smooth Fade Effect */
             }
 
-            /* 3. MOBILE SIDEBAR (Drawer slides UNDER header) */
+            /* 3. SIDEBAR (Drawer) */
             .sidebar {
-                display: flex; 
-                flex-direction: column;
-                position: fixed; 
-                top: 60px; /* Starts EXACTLY below the header */
-                left: 0;
-                height: calc(100vh - 60px); /* Full height minus header */
-                width: 70%; 
-                max-width: 280px;
+                display: flex; flex-direction: column;
+                position: fixed; top: 60px; left: 0;
+                height: calc(100vh - 60px); width: 70%; max-width: 280px;
                 background: var(--bg-sidebar);
                 border-right: 1px solid rgba(255,255,255,0.05);
                 transform: translateX(-100%);
                 transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                z-index: 1900; /* Below the header */
-                padding: 2rem;
+                z-index: 1900; padding: 2rem;
                 box-shadow: 10px 0 50px rgba(0,0,0,0.5);
             }
             .sidebar.open { transform: translateX(0); }
+            .brand { margin-bottom: 1rem; font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; width: 100%; }
 
-            /* Fix the sidebar Brand/Logo spacing inside the drawer */
-            .brand { 
-                margin-bottom: 1rem; 
-                font-size: 1.2rem;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-                padding-bottom: 1rem;
-                width: 100%;
-            }
+            /* 4. MAIN CONTENT */
+            .main { margin-left: 0; width: 100%; padding: 100px 1.5rem 0 1.5rem; }
 
-            /* 4. MAIN CONTENT ADJUSTMENTS */
-            .main { 
-                margin-left: 0; 
-                width: 100%; 
-                /* Padding Top = Header Height (60px) + Extra Space (40px) */
-                padding: 100px 1.5rem 0 1.5rem; 
-            }
-
-            /* 5. TYPOGRAPHY & LAYOUT */
+            /* 5. TYPOGRAPHY */
             h1 { font-size: 2.2rem; margin-top: 0; line-height: 1.2; }
             h2 { font-size: 1.75rem; border-left-width: 3px; padding-left: 10px; margin-bottom: 2rem; }
+
+            /* 6. SOLUTION SECTION FIXES (Pop the Main Image) */
+            /* Main Image - Big & Distinct */
+            .gallery-main {
+                box-shadow: 0 8px 30px rgba(77, 171, 247, 0.15); /* Subtle Blue Glow */
+                margin-bottom: 2rem;
+                border: 1px solid rgba(255,255,255,0.2);
+            }
             
-            /* Grids */
-            .summary-grid, .dataset-layout, .gallery-grid-small, .card-grid { grid-template-columns: 1fr; }
+            /* Sub Images - Side by Side (2 Columns) to look smaller */
+            .gallery-grid-small { 
+                display: grid; 
+                grid-template-columns: 1fr 1fr; /* Force 2 columns */
+                gap: 15px; 
+            }
+            
+            /* Adjust Captions */
+            .caption {
+                font-size: 0.75rem; 
+                margin-top: 8px; 
+                line-height: 1.4;
+                color: var(--text-muted);
+            }
+
+            /* 7. OTHER GRIDS */
+            .summary-grid, .dataset-layout, .card-grid { grid-template-columns: 1fr; }
             .summary-grid { gap: 15px; margin-top: 3rem; }
             .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
             .stat-item:nth-child(3) { grid-column: span 2; }
 
-            /* 6. FOOTER & SPACING */
+            /* 8. FOOTER & SPACING */
             #contact { margin-bottom: 2rem; }
             footer { margin-top: 6rem !important; padding-bottom: 3rem; }
-            
-            /* Scroll Landing Adjustment */
             section { scroll-margin-top: 5rem; }
         }
-        
-        /* HIDE MOBILE HEADER ON DESKTOP */
-        @media (min-width: 1025px) {
-            .mobile-header { display: none; }
-        }
+
+        @media (min-width: 1025px) { .mobile-header { display: none; } }
     </style>
 </head>
 <body>
@@ -790,17 +773,9 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
 <!-- 🟢 NAVIGATION & MOBILE SCRIPT -->
     <script>
         // 1. HARD SCROLL RESET ON RELOAD
-        // This forces the browser to forget previous scroll position
-        if (history.scrollRestoration) {
-            history.scrollRestoration = 'manual';
-        }
-
-        window.onbeforeunload = function () {
-            window.scrollTo(0, 0);
-        };
-
+        if (history.scrollRestoration) { history.scrollRestoration = 'manual'; }
+        window.onbeforeunload = function () { window.scrollTo(0, 0); };
         window.addEventListener('load', function() {
-            // Instant jump to top
             window.scrollTo(0, 0);
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
@@ -808,65 +783,65 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
 
         // 2. MOBILE MENU LOGIC
         document.addEventListener('DOMContentLoaded', () => {
-            const menuBtn = document.querySelector('.mobile-menu-btn'); // The container
+            const menuBtn = document.querySelector('.mobile-menu-btn');
             const sidebar = document.querySelector('.sidebar');
-            const menuIcon = menuBtn.querySelector('i'); // The icon inside
+            const menuIcon = menuBtn.querySelector('i');
+            // Select the Title Text
+            const appTitle = document.querySelector('.mobile-app-title');
 
             if (menuBtn && sidebar) {
-                menuBtn.addEventListener('click', () => {
-                    sidebar.classList.toggle('open');
+                // Function to toggle menu state
+                const toggleMenu = (forceClose = false) => {
+                    const isOpen = sidebar.classList.contains('open');
                     
-                    // Toggle Icon (List <-> X)
-                    if (sidebar.classList.contains('open')) {
+                    if (forceClose || isOpen) {
+                        // CLOSE IT
+                        sidebar.classList.remove('open');
+                        menuIcon.classList.remove('ph-x');
+                        menuIcon.classList.add('ph-list');
+                        // Show Title Text
+                        if(appTitle) appTitle.style.opacity = '1';
+                    } else {
+                        // OPEN IT
+                        sidebar.classList.add('open');
                         menuIcon.classList.remove('ph-list');
                         menuIcon.classList.add('ph-x');
-                    } else {
-                        menuIcon.classList.remove('ph-x');
-                        menuIcon.classList.add('ph-list');
+                        // Hide Title Text
+                        if(appTitle) appTitle.style.opacity = '0';
                     }
-                });
+                };
 
-                // Close menu when clicking a link
+                // Click Button
+                menuBtn.addEventListener('click', () => toggleMenu());
+
+                // Click Link -> Close
                 document.querySelectorAll('.nav-item').forEach(link => {
-                    link.addEventListener('click', () => {
-                        sidebar.classList.remove('open');
-                        menuIcon.classList.remove('ph-x');
-                        menuIcon.classList.add('ph-list');
-                    });
+                    link.addEventListener('click', () => toggleMenu(true));
                 });
                 
-                // Close menu when clicking main content
+                // Click Outside -> Close
                 document.querySelector('.main').addEventListener('click', () => {
-                    if (sidebar.classList.contains('open')) {
-                        sidebar.classList.remove('open');
-                        menuIcon.classList.remove('ph-x');
-                        menuIcon.classList.add('ph-list');
-                    }
+                    if (sidebar.classList.contains('open')) toggleMenu(true);
                 });
             }
         });
 
-        // 3. SCROLL SPY (Active Link Highlighting)
+        // 3. SCROLL SPY
         const sections = document.querySelectorAll('section');
         const navLinks = document.querySelectorAll('.nav-item');
 
         window.addEventListener('scroll', () => {
             let current = '';
-            
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
-                // Buffer accounts for header height
                 const buffer = window.innerWidth < 1024 ? 120 : 150; 
                 if (pageYOffset >= (sectionTop - buffer)) {
                     current = section.getAttribute('id');
                 }
             });
-
-            // Force contact active at bottom
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
                 current = 'contact';
             }
-
             navLinks.forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href').includes(current)) {
@@ -877,6 +852,7 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
     </script>
 </body>
 </html>
+
 
 
 
