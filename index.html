@@ -287,12 +287,73 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
 
         /* Mobile */
         .mobile-menu-btn { display: none; }
+       /* =========================================
+           MOBILE & TABLET OPTIMIZATION
+           ========================================= */
         @media (max-width: 1024px) {
-            .sidebar { display: none; }
-            .main { margin-left: 0; width: 100%; padding: 3rem 2rem; }
-            .mobile-menu-btn { display: block; position: fixed; top: 20px; right: 20px; background: var(--accent); color: #0B1623; padding: 10px; border-radius: 6px; z-index: 100; font-size: 1.5rem; }
-            .summary-grid, .dataset-layout, .gallery-grid-small, .card-grid { grid-template-columns: 1fr; }
-            h1 { font-size: 2.5rem; }
+            
+            /* 1. Layout & Margins */
+            .main { 
+                margin-left: 0; 
+                width: 100%; 
+                /* Increased Top Padding so content isn't hidden behind header */
+                padding: 6rem 1.5rem 4rem 1.5rem; 
+            }
+            
+            /* Adjust scrolling so it lands nicely on mobile */
+            section { scroll-margin-top: 6rem; }
+
+            /* 2. Mobile Typography (Clean & Readable) */
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.75rem; border-left-width: 3px; padding-left: 10px; margin-bottom: 2rem; }
+            .hero-desc { font-size: 1rem; }
+            
+            /* 3. Dataset Stats (Fix Cluttered Items) */
+            .stat-row { 
+                display: grid; 
+                grid-template-columns: 1fr 1fr; /* 2 items per row */
+                gap: 20px; 
+            }
+            /* Make the 3rd item span full width so it doesn't look odd */
+            .stat-item:nth-child(3) { grid-column: span 2; } 
+
+            /* 4. Fix Grids to Single Column */
+            .summary-grid, .dataset-layout, .gallery-grid-small, .card-grid { 
+                grid-template-columns: 1fr; 
+            }
+            .summary-grid { gap: 15px; margin-top: 3rem; }
+
+            /* 5. Mobile Menu Button (Hamburger) */
+            .mobile-menu-btn { 
+                display: flex; align-items: center; justify-content: center;
+                position: fixed; 
+                top: 15px; right: 15px; 
+                background: rgba(11, 22, 35, 0.8); /* Semi-transparent dark */
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(255,255,255,0.2);
+                color: #fff; 
+                padding: 0; 
+                border-radius: 8px; 
+                z-index: 1000; 
+                font-size: 1.6rem;
+                width: 48px; height: 48px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+            .mobile-menu-btn:active { transform: scale(0.95); }
+
+            /* 6. Sidebar Logic (Slide-in Menu) */
+            .sidebar { 
+                display: flex; 
+                position: fixed; top: 0; left: 0;
+                transform: translateX(-100%); /* Hidden by default */
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                width: 85%; max-width: 300px; /* Takes up 85% of mobile screen */
+                box-shadow: 10px 0 50px rgba(0,0,0,0.5);
+            }
+            
+            /* Class to add via JS to open menu */
+            .sidebar.open { transform: translateX(0); }
         }
     </style>
 </head>
@@ -710,6 +771,7 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
 </body>
 
 </html>
+
 
 
 
