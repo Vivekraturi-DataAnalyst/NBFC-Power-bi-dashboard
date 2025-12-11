@@ -317,7 +317,7 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
             border-radius: 50px;
             font-weight: 600;
             font-size: 0.9rem;
-            display: flex; align-items: center; gap: 10px;
+            display: none; align-items: center; gap: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 3000; /* Above everything */
             transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -515,6 +515,12 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
         }
 
         @media (min-width: 1025px) { .mobile-header { display: none; } }
+        
+/* Add this inside @media (max-width: 1024px) */
+    #desktop-popup {
+        display: flex; /* Only show on mobile */
+    }
+        
     </style>
 </head>
 <body>
@@ -992,7 +998,16 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
         
    // ... inside window.addEventListener('scroll', () => { ...
 
-        // 🟢 POPUP LOGIC (REVISED: RE-TRIGGERABLE)
+        // 🟢 POPUP LOGIC (REVISED)
+        const popup = document.getElementById('desktop-popup');
+        const solutionSection = document.getElementById('solution');
+
+        // 🔴 ADD THIS NEW LINE HERE:
+        // If screen is wider than 1024px (Desktop), STOP here. Do nothing.
+        if (window.innerWidth > 1024) return; 
+
+        // ... rest of your code ...
+            
         const popup = document.getElementById('desktop-popup');
         const solutionSection = document.getElementById('solution');
         
@@ -1097,6 +1112,7 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
     </script>
 </body>
 </html>
+
 
 
 
