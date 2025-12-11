@@ -340,10 +340,13 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
                 background: none; border: none; padding: 0;
             }
 
-            .mobile-app-title {
-                font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
-                letter-spacing: 1px; color: #fff;
-                transition: opacity 0.3s ease; /* Smooth Fade Effect */
+          .mobile-app-title {
+                font-size: 0.75rem; /* Smaller font */
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 2px; /* Spaced out letters like Desktop Tag */
+                color: var(--accent); /* Electric Blue Color */
+                transition: opacity 0.3s ease;
             }
 
             /* 3. SIDEBAR (Drawer) */
@@ -876,28 +879,51 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
         const navLinks = document.querySelectorAll('.nav-item');
 
         window.addEventListener('scroll', () => {
-            // ... inside window.addEventListener('scroll', () => { ...
+         
         
-        // 🟢 POPUP LOGIC
+   // ... inside window.addEventListener('scroll', () => { ...
+
+        // 🟢 POPUP LOGIC (REVISED: RE-TRIGGERABLE)
         const popup = document.getElementById('desktop-popup');
         const solutionSection = document.getElementById('solution');
         
-        // Check if solution section exists and we haven't shown popup yet
-        if (solutionSection && !sessionStorage.getItem('popupShown')) {
+        // Use a static variable on the window object to track state across scroll events
+        if (typeof window.popupState === 'undefined') {
+            window.popupState = { inside: false, timer: null };
+        }
+
+        if (solutionSection) {
             const rect = solutionSection.getBoundingClientRect();
-            
-            // Trigger when Solution section is approaching (300px before it hits top)
-            if (rect.top < window.innerHeight - 100) {
-                popup.classList.add('show');
-                sessionStorage.setItem('popupShown', 'true'); // Don't show again this session
-                
-                // Hide automatically after 5 seconds
-                setTimeout(() => {
-                    popup.classList.remove('show');
-                }, 5000);
+            const viewportHeight = window.innerHeight;
+
+            // Definition of "Being in the Zone":
+            // The section is visible on screen (with 100px buffer)
+            const isVisible = (rect.top < viewportHeight - 100) && (rect.bottom > 100);
+
+            if (isVisible) {
+                // If we just entered the zone (and weren't inside before)
+                if (!window.popupState.inside) {
+                    window.popupState.inside = true; // Mark as inside
+                    
+                    popup.classList.add('show'); // SHOW POPUP
+                    
+                    // Clear any existing timer to avoid conflicts
+                    if (window.popupState.timer) clearTimeout(window.popupState.timer);
+                    
+                    // Set timer to hide it after 4.5 seconds
+                    window.popupState.timer = setTimeout(() => {
+                        popup.classList.remove('show');
+                    }, 4500);
+                }
+            } else {
+                // If we are NOT in the zone...
+                // Reset the 'inside' flag. This allows it to trigger again 
+                // the next time you scroll back into the section.
+                window.popupState.inside = false;
             }
         }
         
+        // ... rest of your existing scroll logic ...
         // ... rest of your scroll logic ...
             
             let current = '';
@@ -921,6 +947,7 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
     </script>
 </body>
 </html>
+
 
 
 
