@@ -292,32 +292,69 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
 
         /* Mobile */
         .mobile-menu-btn { display: none; }
-       /* =========================================
-           MOBILE & TABLET OPTIMIZATION
-           ========================================= */
-      /* =========================================
-           MOBILE & TABLET OPTIMIZATION (FIXED)
+    /* =========================================
+           MOBILE & TABLET OPTIMIZATION (FINAL FIX)
            ========================================= */
         @media (max-width: 1024px) {
             
-            /* 1. Layout Fixes */
+            /* 1. Layout & Margins */
             .main { 
                 margin-left: 0; 
                 width: 100%; 
-                /* Removed bottom padding to fix footer space */
-                padding: 6rem 1.5rem 0 1.5rem; 
+                /* Reduced top padding so the Tag sits next to the button */
+                padding: 1.5rem 1.5rem 0 1.5rem; 
             }
             
-            /* Remove margin from the last section so it sits on the footer */
-            #contact { margin-bottom: 2rem; }
+            /* 2. Fix Hero Tag Position (Next to Icon) */
+            #hero .container {
+                display: flex;
+                flex-direction: column;
+            }
             
-            section { scroll-margin-top: 6rem; }
+            #hero .tag {
+                /* Moves the tag to the right of the icon */
+                margin-left: 60px; 
+                margin-top: 5px;
+                margin-bottom: 4rem; /* Adds space between Tag and Main Heading */
+                font-size: 0.8rem;
+                line-height: 1.2;
+            }
+            
+            /* 3. Mobile Menu Button (MOVED TO LEFT) */
+            .mobile-menu-btn { 
+                display: flex; align-items: center; justify-content: center;
+                position: fixed; 
+                top: 20px; left: 20px; /* Left side now */
+                right: auto;
+                background: rgba(11, 22, 35, 0.95);
+                border: 1px solid rgba(255,255,255,0.2);
+                color: #fff; padding: 0; border-radius: 8px; 
+                z-index: 2000; 
+                font-size: 1.6rem; width: 44px; height: 44px; /* Slightly smaller */
+                cursor: pointer;
+            }
 
-            /* 2. Typography */
-            h1 { font-size: 2.2rem; }
+            /* 4. Sidebar (Reduced Width) */
+            .sidebar { 
+                display: flex; flex-direction: column;
+                position: fixed; top: 0; left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                /* Reduced width as requested */
+                width: 70%; max-width: 250px; 
+                background: var(--bg-sidebar);
+                box-shadow: 10px 0 50px rgba(0,0,0,0.5);
+                z-index: 1500;
+                border-right: 1px solid rgba(255,255,255,0.1);
+            }
+            .sidebar.open { transform: translateX(0); }
+
+            /* 5. Typography Adjustments */
+            h1 { font-size: 2.2rem; margin-top: 0; }
             h2 { font-size: 1.75rem; border-left-width: 3px; padding-left: 10px; margin-bottom: 2rem; }
             
-            /* 3. Grid Fixes */
+            /* 6. Grid Fixes */
             .summary-grid, .dataset-layout, .gallery-grid-small, .card-grid { 
                 grid-template-columns: 1fr; 
             }
@@ -325,35 +362,14 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
             .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
             .stat-item:nth-child(3) { grid-column: span 2; }
 
-            /* 4. Mobile Menu Button */
-            .mobile-menu-btn { 
-                display: flex; align-items: center; justify-content: center;
-                position: fixed; top: 15px; right: 15px; 
-                background: rgba(11, 22, 35, 0.9);
-                border: 1px solid rgba(255,255,255,0.2);
-                color: #fff; padding: 0; border-radius: 8px; 
-                z-index: 2000; /* Highest priority */
-                font-size: 1.6rem; width: 48px; height: 48px;
-                cursor: pointer;
-            }
-
-            /* 5. Sidebar (Drawer) */
-            .sidebar { 
-                display: flex; flex-direction: column;
-                position: fixed; top: 0; left: 0;
-                height: 100vh;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease-in-out;
-                width: 85%; max-width: 300px; 
-                background: var(--bg-sidebar);
-                box-shadow: 10px 0 50px rgba(0,0,0,0.5);
-                z-index: 1500; /* Below button, above content */
-                border-right: 1px solid rgba(255,255,255,0.1);
-            }
-            .sidebar.open { transform: translateX(0); }
+            /* 7. Footer & Contact Spacing */
+            #contact { margin-bottom: 2rem; }
             
-            /* 6. Footer Fix */
-            footer { margin-top: 0 !important; padding-bottom: 2rem; }
+            /* Added EXTRA margin-top to footer for breathing space */
+            footer { margin-top: 6rem !important; padding-bottom: 2rem; }
+            
+            /* Scroll Landing Fix */
+            section { scroll-margin-top: 5rem; }
         }
     </style>
 </head>
@@ -740,24 +756,28 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
     </script>
 <!-- 🟢 NAVIGATION SCRIPT -->
     <script>
-        // 1. FORCE SCROLL TO TOP ON RELOAD
+        // 1. AGGRESSIVE SCROLL TO TOP ON RELOAD
+        // We temporarily disable smooth scroll to force the jump
         if (history.scrollRestoration) {
             history.scrollRestoration = 'manual';
-        } else {
-            window.onbeforeunload = function () {
-                window.scrollTo(0, 0);
-            }
         }
         
-        // Additional ensure:
+        window.onbeforeunload = function () {
+            window.scrollTo(0, 0);
+        };
+
         window.onload = function() {
+            document.documentElement.style.scrollBehavior = 'auto'; // Disable smooth scroll
+            window.scrollTo(0, 0);
+            
+            // Re-enable smooth scroll after a short delay
             setTimeout(function() {
                 window.scrollTo(0, 0);
-            }, 10);
+                document.documentElement.style.scrollBehavior = 'smooth';
+            }, 100);
         };
 
         // 2. MOBILE MENU LOGIC
-        // We wrap this in DOMContentLoaded to ensure elements exist before running
         document.addEventListener('DOMContentLoaded', () => {
             const menuBtn = document.querySelector('.mobile-menu-btn');
             const sidebar = document.querySelector('.sidebar');
@@ -786,7 +806,7 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
                     });
                 });
                 
-                // Close menu when clicking outside (on main content)
+                // Close menu when clicking outside
                 document.querySelector('.main').addEventListener('click', () => {
                     if (sidebar.classList.contains('open')) {
                         sidebar.classList.remove('open');
@@ -806,14 +826,12 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
             
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
-                // Buffer for mobile vs desktop
                 const buffer = window.innerWidth < 1024 ? 200 : 150; 
                 if (pageYOffset >= (sectionTop - buffer)) {
                     current = section.getAttribute('id');
                 }
             });
 
-            // Bottom of page detection for Contact link
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
                 current = 'contact';
             }
