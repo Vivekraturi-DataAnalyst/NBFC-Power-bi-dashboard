@@ -738,9 +738,8 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
     <script>
         AOS.init({ duration: 800, offset: 50 });
     </script>
-<!-- 🟢 NAVIGATION SCRIPT (Paste this before </body>) -->
+<!-- 🟢 NAVIGATION SCRIPT -->
     <script>
-      <script>
         // 1. FORCE SCROLL TO TOP ON RELOAD
         if (history.scrollRestoration) {
             history.scrollRestoration = 'manual';
@@ -749,6 +748,8 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
                 window.scrollTo(0, 0);
             }
         }
+        
+        // Additional ensure:
         window.onload = function() {
             setTimeout(function() {
                 window.scrollTo(0, 0);
@@ -756,30 +757,44 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
         };
 
         // 2. MOBILE MENU LOGIC
-        const menuBtn = document.querySelector('.mobile-menu-btn');
-        const sidebar = document.querySelector('.sidebar');
-        const menuIcon = menuBtn.querySelector('i');
+        // We wrap this in DOMContentLoaded to ensure elements exist before running
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            const sidebar = document.querySelector('.sidebar');
+            const menuIcon = menuBtn.querySelector('i');
 
-        menuBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            
-            // Toggle Icon
-            if (sidebar.classList.contains('open')) {
-                menuIcon.classList.remove('ph-list');
-                menuIcon.classList.add('ph-x');
-            } else {
-                menuIcon.classList.remove('ph-x');
-                menuIcon.classList.add('ph-list');
+            if (menuBtn && sidebar) {
+                menuBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                    
+                    // Toggle Icon
+                    if (sidebar.classList.contains('open')) {
+                        menuIcon.classList.remove('ph-list');
+                        menuIcon.classList.add('ph-x');
+                    } else {
+                        menuIcon.classList.remove('ph-x');
+                        menuIcon.classList.add('ph-list');
+                    }
+                });
+
+                // Close menu when clicking a link
+                document.querySelectorAll('.nav-item').forEach(link => {
+                    link.addEventListener('click', () => {
+                        sidebar.classList.remove('open');
+                        menuIcon.classList.remove('ph-x');
+                        menuIcon.classList.add('ph-list');
+                    });
+                });
+                
+                // Close menu when clicking outside (on main content)
+                document.querySelector('.main').addEventListener('click', () => {
+                    if (sidebar.classList.contains('open')) {
+                        sidebar.classList.remove('open');
+                        menuIcon.classList.remove('ph-x');
+                        menuIcon.classList.add('ph-list');
+                    }
+                });
             }
-        });
-
-        // Close menu when clicking a link
-        document.querySelectorAll('.nav-item').forEach(link => {
-            link.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                menuIcon.classList.remove('ph-x');
-                menuIcon.classList.add('ph-list');
-            });
         });
 
         // 3. NAVIGATION HIGHLIGHTING
@@ -798,7 +813,7 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
                 }
             });
 
-            // Bottom of page detection
+            // Bottom of page detection for Contact link
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
                 current = 'contact';
             }
@@ -812,8 +827,9 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
         });
     </script>
 </body>
-
 </html>
+
+
 
 
 
