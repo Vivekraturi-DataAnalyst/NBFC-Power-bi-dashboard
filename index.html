@@ -49,6 +49,7 @@
             display: flex;
         }
 
+        
         a { text-decoration: none; color: inherit; transition: 0.2s; }
         ul { list-style: none; }
         img { display: block; max-width: 100%; border-radius: 8px; }
@@ -290,6 +291,28 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
         .contact-item { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; color: #fff; }
         .contact-item:hover { color: var(--accent); }
 
+     /* POPUP STYLES */
+        #desktop-popup {
+            position: fixed;
+            top: -80px; /* Hidden above the screen */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(77, 171, 247, 0.95); /* Accent Color */
+            color: #0B1623;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 3000; /* Above everything */
+            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 90%; max-width: 400px;
+            justify-content: center;
+        }
+        /* Class to slide it down */
+        #desktop-popup.show { top: 80px; } /* Slides down to 80px from top */
+        
         /* Mobile */
         .mobile-menu-btn { display: none; }
 /* =========================================
@@ -367,6 +390,23 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
                 line-height: 1.4;
                 color: var(--text-muted);
             }
+            
+            /* ... existing solution code ... */
+            
+            /* REDUCE GAP: This shrinks the space between main image and sub images */
+            .divider { margin: 1.5rem 0 !important; } 
+
+            /* FIX TEXT MARGIN: This adds space at bottom of sub-image cards */
+            .gallery-small { 
+                padding-bottom: 1rem; /* Adds breathing room for text */
+                background: var(--bg-card); /* Ensures text sits on card background */
+            }
+            
+            /* Ensure the text doesn't touch the sides either */
+            .gallery-small .caption {
+                padding: 0 10px; /* Left/Right padding for text */
+                margin-bottom: 5px;
+            }
 
             /* 7. OTHER GRIDS */
             .summary-grid, .dataset-layout, .card-grid { grid-template-columns: 1fr; }
@@ -385,6 +425,11 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
 </head>
 <body>
 
+    <!-- DESKTOP SUGGESTION POPUP -->
+    <div id="desktop-popup">
+        <i class="ph-fill ph-monitor"></i>
+        <span>Switch to Desktop for the best dashboard view.</span>
+    </div>
     
    <!-- MOBILE HEADER (Fixed Top Bar) -->
     <div class="mobile-header">
@@ -831,6 +876,30 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
         const navLinks = document.querySelectorAll('.nav-item');
 
         window.addEventListener('scroll', () => {
+            // ... inside window.addEventListener('scroll', () => { ...
+        
+        // 🟢 POPUP LOGIC
+        const popup = document.getElementById('desktop-popup');
+        const solutionSection = document.getElementById('solution');
+        
+        // Check if solution section exists and we haven't shown popup yet
+        if (solutionSection && !sessionStorage.getItem('popupShown')) {
+            const rect = solutionSection.getBoundingClientRect();
+            
+            // Trigger when Solution section is approaching (300px before it hits top)
+            if (rect.top < window.innerHeight - 100) {
+                popup.classList.add('show');
+                sessionStorage.setItem('popupShown', 'true'); // Don't show again this session
+                
+                // Hide automatically after 5 seconds
+                setTimeout(() => {
+                    popup.classList.remove('show');
+                }, 5000);
+            }
+        }
+        
+        // ... rest of your scroll logic ...
+            
             let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
@@ -852,6 +921,7 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
     </script>
 </body>
 </html>
+
 
 
 
