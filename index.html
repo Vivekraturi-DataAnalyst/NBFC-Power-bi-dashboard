@@ -933,9 +933,11 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
     <script>
         AOS.init({ duration: 800, offset: 50 });
     </script>
-<!-- 🟢 NAVIGATION & MOBILE SCRIPT -->
+<!-- 🟢 NAVIGATION, MOBILE POPUP & LIGHTBOX SCRIPT -->
     <script>
+        // ==========================================
         // 1. HARD SCROLL RESET ON RELOAD
+        // ==========================================
         if (history.scrollRestoration) { history.scrollRestoration = 'manual'; }
         window.onbeforeunload = function () { window.scrollTo(0, 0); };
         window.addEventListener('load', function() {
@@ -944,112 +946,85 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
             document.documentElement.scrollTop = 0;
         });
 
+        // ==========================================
         // 2. MOBILE MENU LOGIC
+        // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             const menuBtn = document.querySelector('.mobile-menu-btn');
             const sidebar = document.querySelector('.sidebar');
             const menuIcon = menuBtn.querySelector('i');
-            // Select the Title Text
             const appTitle = document.querySelector('.mobile-app-title');
 
             if (menuBtn && sidebar) {
-                // Function to toggle menu state
                 const toggleMenu = (forceClose = false) => {
                     const isOpen = sidebar.classList.contains('open');
                     
                     if (forceClose || isOpen) {
-                        // CLOSE IT
                         sidebar.classList.remove('open');
                         menuIcon.classList.remove('ph-x');
                         menuIcon.classList.add('ph-list');
-                        // Show Title Text
                         if(appTitle) appTitle.style.opacity = '1';
                     } else {
-                        // OPEN IT
                         sidebar.classList.add('open');
                         menuIcon.classList.remove('ph-list');
                         menuIcon.classList.add('ph-x');
-                        // Hide Title Text
                         if(appTitle) appTitle.style.opacity = '0';
                     }
                 };
 
-                // Click Button
                 menuBtn.addEventListener('click', () => toggleMenu());
-
-                // Click Link -> Close
+                
                 document.querySelectorAll('.nav-item').forEach(link => {
                     link.addEventListener('click', () => toggleMenu(true));
                 });
                 
-                // Click Outside -> Close
                 document.querySelector('.main').addEventListener('click', () => {
                     if (sidebar.classList.contains('open')) toggleMenu(true);
                 });
             }
         });
 
-        // 3. SCROLL SPY
+        // ==========================================
+        // 3. SCROLL EVENTS (POPUP + HIGHLIGHTING)
+        // ==========================================
         const sections = document.querySelectorAll('section');
         const navLinks = document.querySelectorAll('.nav-item');
-
-        window.addEventListener('scroll', () => {
-         
-        
-   // ... inside window.addEventListener('scroll', () => { ...
-
-        // 🟢 POPUP LOGIC (REVISED)
         const popup = document.getElementById('desktop-popup');
         const solutionSection = document.getElementById('solution');
 
-        // 🔴 ADD THIS NEW LINE HERE:
-        // If screen is wider than 1024px (Desktop), STOP here. Do nothing.
-        if (window.innerWidth > 1024) return; 
-
-        // ... rest of your code ...
-            
-        const popup = document.getElementById('desktop-popup');
-        const solutionSection = document.getElementById('solution');
-        
-        // Use a static variable on the window object to track state across scroll events
+        // Initialize Popup State
         if (typeof window.popupState === 'undefined') {
             window.popupState = { inside: false, timer: null };
         }
 
-        if (solutionSection) {
-            const rect = solutionSection.getBoundingClientRect();
-            const viewportHeight = window.innerHeight;
-
-            // Definition of "Being in the Zone":
-            // The section is visible on screen (with 100px buffer)
-            const isVisible = (rect.top < viewportHeight - 100) && (rect.bottom > 100);
-
-            if (isVisible) {
-                // If we just entered the zone (and weren't inside before)
-                if (!window.popupState.inside) {
-                    window.popupState.inside = true; // Mark as inside
-                    
-                    popup.classList.add('show'); // SHOW POPUP
-                    
-                    // Clear any existing timer to avoid conflicts
-                    if (window.popupState.timer) clearTimeout(window.popupState.timer);
-                    
-                    // Set timer to hide it after 4.5 seconds
-                    window.popupState.timer = setTimeout(() => {
-                        popup.classList.remove('show');
-                    }, 4500);
-                }
-            } else {
-                // If we are NOT in the zone...
-                // Reset the 'inside' flag. This allows it to trigger again 
-                // the next time you scroll back into the section.
-                window.popupState.inside = false;
-            }
-        }
-        
-        // ... rest of your existing scroll logic ...
-        // ... rest of your scroll logic ...
+        window.addEventListener('scroll', () => {
             
+            // --- A) MOBILE POPUP LOGIC ---
+            // Only run this if screen is Mobile (less than 1024px)
+            if (window.innerWidth <= 1024 && solutionSection) {
+                const rect = solutionSection.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+
+                // Check if we are "In the Zone"
+                const isVisible = (rect.top < viewportHeight - 100) && (rect.bottom > 100);
+
+                if (isVisible) {
+                    if (!window.popupState.inside) {
+                        window.popupState.inside = true;
+                        popup.classList.add('show');
+                        
+                        if (window.popupState.timer) clearTimeout(window.popupState.timer);
+                        window.popupState.timer = setTimeout(() => {
+                            popup.classList.remove('show');
+                        }, 4500);
+                    }
+                } else {
+                    // Reset when leaving zone so it can trigger again
+                    window.popupState.inside = false;
+                }
+            }
+
+            // --- B) NAVIGATION HIGHLIGHTING LOGIC ---
             let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
@@ -1069,42 +1044,41 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
             });
         });
 
-        // 🟢 LIGHTBOX LOGIC
+        // ==========================================
+        // 4. LIGHTBOX LOGIC (FULL SCREEN IMAGES)
+        // ==========================================
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-image');
         const closeBtn = document.querySelector('.lightbox-close');
         
-        // 1. Select all images inside the Solution Section
+        // Select all images inside the Solution Section
         const solutionImages = document.querySelectorAll('#solution img');
 
-        // 2. Add Click Event to each image
         solutionImages.forEach(img => {
             img.addEventListener('click', () => {
-                lightboxImg.src = img.src; // Set the full screen image
-                lightbox.classList.add('active'); // Show modal
-                document.body.style.overflow = 'hidden'; // Stop background scrolling
+                lightboxImg.src = img.src; 
+                lightbox.classList.add('active'); 
+                document.body.style.overflow = 'hidden'; 
             });
         });
 
-        // 3. Function to Close
         const closeLightbox = () => {
             lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto'; // Re-enable scrolling
+            document.body.style.overflow = 'auto'; 
         };
 
-        // 4. Close triggers (Click X, or Click Outside Image)
-        closeBtn.addEventListener('click', closeLightbox);
+        if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
         
-        lightbox.addEventListener('click', (e) => {
-            // If user clicks the dark background (not the image or button)
-            if (e.target === lightbox || e.target.classList.contains('lightbox-content')) {
-                closeLightbox();
-            }
-        });
+        if (lightbox) {
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox || e.target.classList.contains('lightbox-content')) {
+                    closeLightbox();
+                }
+            });
+        }
         
-        // Close on Escape Key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            if (e.key === 'Escape' && lightbox && lightbox.classList.contains('active')) {
                 closeLightbox();
             }
         });
@@ -1112,6 +1086,7 @@ section { margin-bottom: 8rem; scroll-margin-top: 3rem; }
     </script>
 </body>
 </html>
+
 
 
 
